@@ -7,6 +7,7 @@ import (
 	"gowebbase/routers/user"
 	"gowebbase/routers/demo"
 	"gowebbase/routers/file"
+	"gowebbase/routers/pay"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,5 +26,7 @@ func GinRouter(r *gin.Engine) *gin.Engine {
 	demo.Routers(rr)
 	rr = r.Group("/file")
 	file.Routers(rr)
+	rr = r.Group("/pay")
+	pay.Routers(rr)
 	return r
 }

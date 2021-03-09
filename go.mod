@@ -11,6 +11,8 @@ require (
 	github.com/pilu/config v0.0.0-20131214182432-3eb99e6c0b9a // indirect
 	github.com/pilu/fresh v0.0.0-20190826141211-0fa698148017 // indirect
 	github.com/zarte/comutil v0.0.0-00010101000000-000000000000
+	xorm.io/core v0.7.3 // indirect
+	xorm.io/xorm v1.0.7 // indirect
 )
 
 replace github.com/zarte/comutil => E:\MyGo\comutil

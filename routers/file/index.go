@@ -1,14 +1,13 @@
 package file
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
+	"gowebbase/modules/utils"
+	"io"
 	"net/http"
 	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -37,25 +36,30 @@ func Function(ctx *gin.Context) {
 				"code": 0,
 				"message": "上传文件格式不支持",
 			})
+			return
 		}
 		// 根据时间鹾生成文件名
 		fileNameInt := time.Now().Unix()
 		fileNameStr := strconv.FormatInt(fileNameInt, 10)
 		fileName := fileNameStr + extString
-		filePath := filepath.Join(utils.Mkdir("static/upload"), "/", fileName)
-		fmt.Println("22",filePath)
-		//client, err := oss.New("Endpoint", "yourAccessKeyId", "yourAccessKeySecret")
-		client, err := oss.New("http://oss-cn-shenzhen.aliyuncs.com", "LTAI4Ff9jV7DfiPrJT36a", "zZOpRqGtKNQl30Su6Ytj12b3IEF")
-		if err != nil {
-			fmt.Println("阿里云上传错误", err)
+		filePath := utils.GetIniVal("Uploaddir","")
+		if !utils.Mkdir(filePath) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"code": 0,
+				"message": "创建文件夹失败",
+			})
 			return
 		}
-		//指定存储空间
-		//bucket, err := client.Bucket("yourBucketName")
-		bucket, err := client.Bucket("shuiping-code")
-		if err != nil {
-			fmt.Println("存储空间错误")
-			os.Exit(-1)
+		fmt.Println("22",filePath)
+		//client, err := oss.New("Endpoint", "yourAccessKeyId", "yourAccessKeySecret")
+		dstFile,err := os.OpenFile(filePath+fileName,os.O_WRONLY | os.O_CREATE,0777)
+		if err != nil{
+			fmt.Printf("打开目标文件错误，错误信息=%v\n",err)
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"code": 0,
+				"message": "打开目标文件错误",
+			})
+			return
 		}
 		//打开文件
 		fileHandle, err := file.Open()
@@ -67,14 +71,12 @@ func Function(ctx *gin.Context) {
 			return
 		}
 		defer fileHandle.Close()
-		fileByte,_:= ioutil.ReadAll(fileHandle)
-		//上传到oss上
-		err = bucket.PutObject(filePath, bytes.NewReader(fileByte))
+		_,err = io.Copy(dstFile,fileHandle)
 		if err != nil {
 			fmt.Println(err)
 			ctx.JSON(http.StatusOK, gin.H{
 				"code":0,
-				"message": "解析错误",
+				"message": "保存文件失败",
 			})
 			return
 		}

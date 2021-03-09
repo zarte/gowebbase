@@ -2,6 +2,8 @@ package utils
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"time"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -49,4 +51,13 @@ func ParseToken(tokenString string) (*JwtData, error) {
 		return claims, nil
 	}
 	return nil, errors.New("invalid token")
+}
+
+func Mkdir(path string) bool  {
+	err := os.MkdirAll(path, 0777)
+	if err != nil {
+		fmt.Printf("crete fail %s", err)
+		return false
+	}
+	return true
 }

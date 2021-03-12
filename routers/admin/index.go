@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	"github.com/gin-gonic/gin"
@@ -8,9 +8,7 @@ import (
 
 func Routers(r *gin.RouterGroup) {
 	rr := r.Group("")
-	rr.GET("/userinfo",middleware.JWTAuthMiddleware(), Userinfo)
-	rr.POST("/login", Login)
-	rr.POST("/register", Register)
+	rr.POST("/userlist",middleware.JWTAuthAdminMiddleware(), userlist)
 	return
 }
 

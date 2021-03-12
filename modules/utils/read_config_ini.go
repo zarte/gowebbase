@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/zarte/comutil/Goconfig"
+	Model "gowebbase/models"
 	"strconv"
 )
 
@@ -15,6 +16,16 @@ func GetConfigIni(filepath string) (err error) {
 		return err
 	}
 	cfg = config
+
+	var pagesize string
+	if pagesize, err = cfg.GetValue("self", "PageSize"); err != nil {
+		fmt.Println("配置文件中不存在PageSize", err)
+		pagesize = "15"
+	}
+	Model.PageSize,err = strconv.Atoi(pagesize)
+	if err !=nil {
+		fmt.Println("pagesize err:"+err.Error())
+	}
 	return nil
 }
 

@@ -1,7 +1,15 @@
 package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	Model "gowebbase/models"
+	"math/rand"
+	"os"
+	"strconv"
 	"time"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -12,6 +20,7 @@ type ReturnComJson struct {
 }
 type JwtUserInfo struct {
 	Other string `json:"other"`
+	Role []int `json:"role"`
 }
 
 type JwtData struct {
@@ -49,4 +58,59 @@ func ParseToken(tokenString string) (*JwtData, error) {
 		return claims, nil
 	}
 	return nil, errors.New("invalid token")
+}
+
+func Mkdir(path string) bool  {
+	err := os.MkdirAll(path, 0777)
+	if err != nil {
+		fmt.Printf("crete fail %s", err)
+		return false
+	}
+	return true
+}
+
+// MD5 生成MD5摘要
+func MD5(s string) string {
+	data := []byte(s)
+	has := md5.Sum(data)
+	md5str1 := fmt.Sprintf("%x", has) //将[]byte转成16进制
+	return  md5str1
+}
+
+// MD5 byte生成MD5摘要
+func MD5bt(s []byte) string {
+	m := md5.New()
+	m.Write(s)
+	return hex.EncodeToString(m.Sum(nil))
+}
+
+func CreateCaptcha6() string {
+	return fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
+}
+
+
+// ParsePageAndPageSize 解析查询参数中的页数和每页数量
+func ParsePageAndPageSize(ctx *gin.Context, params Model.CommonMap) {
+	rpage := ctx.DefaultQuery("page","0")
+	rpageSize := ctx.DefaultQuery("page_size","0")
+
+	page,err:= strconv.Atoi(rpage)
+	if err != nil{
+		fmt.Println(err)
+		page = 1
+	}
+	pageSize,err:= strconv.Atoi(rpageSize)
+	if err != nil{
+		fmt.Println(err)
+		pageSize = Model.PageSize
+	}
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = Model.PageSize
+	}
+
+	params["Page"] = page
+	params["PageSize"] = pageSize
 }

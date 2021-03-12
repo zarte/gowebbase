@@ -21,5 +21,10 @@ func Routers(r *gin.RouterGroup) {
 }
 func Function(c *gin.Context) {
 	fmt.Println("demo .........")
+    c.DefaultQuery("firstname", "Guest")
+	c.Query("lastname")
+	 c.PostForm("message")
+	c.DefaultPostForm("nick", "anonymous") // 此方法可以设置默认值
+
 	return
 }

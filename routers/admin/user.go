@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	Model "gowebbase/models"
-	"gowebbase/modules/utils"
 	"net/http"
 )
 
@@ -12,7 +11,7 @@ func userlist(c *gin.Context)  {
 	var params Model.CommonMap = Model.CommonMap{}
 	params["username"] = c.DefaultQuery("username", "")
 	params["roleid"] = c.DefaultQuery("roleid", "")
-	utils.ParsePageAndPageSize(c, params)
+	Model.ParsePageAndPageSize(c, params)
 	userModel := new(Model.User)
 	total, err :=userModel.Total(params)
 	if err != nil {

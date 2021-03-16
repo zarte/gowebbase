@@ -1,12 +1,12 @@
 package Model
 
 import (
-    _ "github.com/go-sql-driver/mysql"
-    "gowebbase/modules/utils"
-    "xorm.io/xorm"
-    "time"
     "fmt"
+    _ "github.com/go-sql-driver/mysql"
+    "gowebbase/modules/config"
+    "time"
     "xorm.io/core"
+    "xorm.io/xorm"
 )
 
 
@@ -16,7 +16,7 @@ var engine *xorm.Engine
 func GetInstance() *xorm.Engine {
     if engine == nil {
         var err error
-        engine, err = xorm.NewEngine("mysql", utils.GetIniVal("local","database"))
+        engine, err = xorm.NewEngine("mysql", config.GetIniVal("local","database"))
         if err != nil {
             fmt.Println("NewEngine create fail:",err)
         }
@@ -24,7 +24,7 @@ func GetInstance() *xorm.Engine {
         if err2 != nil {
             fmt.Println("Ping error:",err2)
         }
-        mapper := core.NewPrefixMapper(core.SnakeMapper{}, utils.GetIniVal("pre","database"))
+        mapper := core.NewPrefixMapper(core.SnakeMapper{}, config.GetIniVal("pre","database"))
         engine.SetTableMapper(mapper)
         engine.SetMaxIdleConns(2)
         engine.SetMaxOpenConns(5)

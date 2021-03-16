@@ -17,7 +17,7 @@ type User struct {
     Point int `xorm:"INT(11)"`
 	Money int `xorm:"INT(11)"`
 	Phone    string `xorm:"VARCHAR(512)"`
-	State    int `xorm:"TINYINT(4)`
+	Status    int `xorm:"TINYINT(4)`
 	Ctime  string    `xorm:"DATETIME"`
 	Stime  string    `xorm:"DATETIME"`
 	BaseModel        `json:"-" xorm:"-"`
@@ -59,7 +59,7 @@ func (task *User) GetUserPage(params CommonMap) ([]User,error) {
 func CheckUserNameExist(username string) bool {
 	var info User
     engine := GetInstance()
-	res,err := engine.Table("user").Where("username  =? ",username).Get(&info)
+	res,err := engine.Where("username  =? ",username).Get(&info)
 	if err != nil{
 		fmt.Println(err)
 		return false
@@ -70,7 +70,7 @@ func CheckUserNameExist(username string) bool {
 func GetUserByName(username string) (User,error) {
 	var info User
 	engine := GetInstance()
-	res,err := engine.Table("user").Where("username  =? ",username).Where("status  =? ",0).Get(&info)
+	res,err := engine.Where("username  =? ",username).Where("status  =? ",0).Get(&info)
 	if err != nil{
 		fmt.Println(err)
 		return info,err
@@ -80,12 +80,13 @@ func GetUserByName(username string) (User,error) {
 	}else {
 		return info,nil
 	}
+
 }
 
 func (task *User)GetUserById(id int) (User,error) {
 	var info User
 	engine := GetInstance()
-	res,err := engine.Table("user").Where("id  =? ",id).Where("status  =? ",0).Get(&info)
+	res,err := engine.Where("id  =? ",id).Where("status  =? ",0).Get(&info)
 	if err != nil{
 		fmt.Println(err)
 		return info,err
@@ -103,7 +104,7 @@ func AddUserInfo(info User) (int,error) {
 	curtime :=time.Now().Format("2006-01-02 15:04:05")
 	info.Ctime = curtime
 	info.Stime = curtime
-	pos,err := engine.Table("user").InsertOne(info)
+	pos,err := engine.InsertOne(info)
 	if err != nil{
 		fmt.Println(err)
 		return 0,err
@@ -124,7 +125,7 @@ func UpdateUserInfoById(id int,info User) (int,error) {
 func DeleteUserById(id int) (int,error) {
 	engine := GetInstance()
 	user := new(User)
-	user.State = 1
+	user.Status = 1
 	pos,err := engine.Table("user").Where("id  =? ",id).Limit(1).Update(user)
 	if err != nil{
 		fmt.Println(err)

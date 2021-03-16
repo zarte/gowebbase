@@ -9,7 +9,7 @@ type Urole struct {
     Id      int    `xorm:"INT(10)"`
 	Uid   int `xorm:"VARCHAR(512)"`
     Roleid   int `xorm:"VARCHAR(512)"`
-	State    int `xorm:"TINYINT(4)`
+	Status    int `xorm:"TINYINT(4)`
 	Ctime  string    `xorm:"DATETIME"`
 	Stime  string    `xorm:"DATETIME"`
 }
@@ -20,8 +20,8 @@ func UpdateUrole(uid int,roleid []int) (int,error) {
 	}
 	engine := GetInstance()
 	//删除原权限
-	engine.Table("urole").Where("uid  =? ",uid).Update(&Urole{
-		State: 1,
+	engine.Where("uid  =? ",uid).Update(&Urole{
+		Status: 1,
 	})
 	//循环添加
 	var list []Urole
@@ -34,7 +34,7 @@ func UpdateUrole(uid int,roleid []int) (int,error) {
 		item.Stime = curtime
 		list = append(list,item)
 	}
-	pos,err := engine.Table("urole").InsertMulti(list)
+	pos,err := engine.Insert(list)
 	if err != nil{
 		fmt.Println(err)
 		return 0,err
@@ -49,7 +49,7 @@ func GetUroles(uid int) ([]int,error) {
 	}
 	engine := GetInstance()
 	list := make([]*Urole, 0)
-	err := engine.Table("urole").Where("uid  =? ",uid).Find(list)
+	err := engine.Where("uid  =? ",uid).Find(&list)
 	if err != nil{
 		fmt.Println(err)
 		return nil,err

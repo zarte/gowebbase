@@ -22,7 +22,7 @@ type register struct {
 func Login(r *gin.Context)  {
 	var json login
 	if err := r.ShouldBindJSON(&json); err != nil {
-		r.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		r.JSON(http.StatusBadRequest, gin.H{"msg": "login parmas fail", "code": 4})
 		return
 	}
 	info,err := Model.GetUserByName(json.Username)
@@ -34,7 +34,7 @@ func Login(r *gin.Context)  {
 		r.JSON(http.StatusOK, gin.H{"msg": "login fail 10002", "code": 4})
 		return
 	}
-	if utils.MD5(json.Passwd + info.Salt) != info.Passwd {
+	if utils.MD5(utils.MD5(json.Passwd) + info.Salt) != info.Passwd {
 		r.JSON(http.StatusOK, gin.H{"msg": "login fail 10003", "code": 4})
 		return
 	}
@@ -51,7 +51,6 @@ func Login(r *gin.Context)  {
 		Msg:  "success",
 		Data: gin.H{"username": json.Username, "token": token},
 	})
-	fmt.Println("login .........")
 	return
 }
 
@@ -82,7 +81,7 @@ func Register(r *gin.Context)  {
 	info.Username = json.Username
 	info.Salt = utils.CreateCaptcha6()
 	info.Passwd = utils.MD5(utils.MD5(json.Passwd)+info.Salt)
-	info.Roles = ",2,"
+	info.Roles = "0"
 	info.Email = json.Email
 	uid,err := Model.AddUserInfo(info)
 	if err != nil{
@@ -90,8 +89,13 @@ func Register(r *gin.Context)  {
 		return
 	}
 	//添加默认角色
-	Model.UpdateUrole(uid,[]int{2})
+	Model.UpdateUrole(uid,[]int{0})
 	r.JSON(http.StatusOK, gin.H{"msg": "success", "code": 200})
+	return
+}
+
+func Loginout(r *gin.Context)  {
+
 	return
 }
 

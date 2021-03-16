@@ -1,6 +1,10 @@
 # gowebbase
 基于gin的goweb项目基础
 
+## 热重启
+go get github.com/pilu/fresh
+cd $GOPATH/src/fresh_test
+fresh
 
 ## 目录说明
 routers：路由模块以及控制器  

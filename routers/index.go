@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gowebbase/routers/admin"
 	"gowebbase/routers/api"
+	"gowebbase/routers/checkcode"
 	"gowebbase/routers/user"
 	"gowebbase/routers/demo"
 	"gowebbase/routers/file"
@@ -16,7 +17,9 @@ func GinRouter(r *gin.Engine) *gin.Engine {
 	rr.GET("/first", func(c *gin.Context) {
 		fmt.Println("first .........")
 	})
+
 	user.Routers(rr)
+	checkcode.Routers(rr)
 	// authorized.Use(AuthRequired())
 	rr = r.Group("/admin")
 	admin.Routers(rr)
@@ -26,6 +29,7 @@ func GinRouter(r *gin.Engine) *gin.Engine {
 	demo.Routers(rr)
 	rr = r.Group("/file")
 	file.Routers(rr)
+
 	rr = r.Group("/pay")
 	pay.Routers(rr)
 	return r
